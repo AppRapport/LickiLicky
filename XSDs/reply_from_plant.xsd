@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML 2014 Developer Bundle Edition (Education) 12.2.8.5459 (http://www.liquid-technologies.com)-->
+<xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           attributeFormDefault="unqualified"
+           elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="order">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="first_name"
+                            type="xs:string"
+                            minOccurs="0" />
+                <xs:element name="last_name"
+                            type="xs:string"
+                            minOccurs="0" />
+                <xs:element name="region"
+                            type="xs:string"
+                            minOccurs="0" />
+                <xs:element name="ship_to_addr"
+                            minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ship_to_street"
+                                        type="xs:string"
+                                        minOccurs="0" />
+                            <xs:element name="ship_to_city"
+                                        type="xs:string"
+                                        minOccurs="0" />
+                            <xs:element name="ship_to_state"
+                                        type="xs:string"
+                                        minOccurs="0" />
+                            <xs:element name="ship_to_zip_code"
+                                        type="xs:unsignedShort"
+                                        minOccurs="0" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="item"
+                            minOccurs="0"
+                            maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="description"
+                                        type="xs:string"
+                                        minOccurs="0" />
+                            <xs:element name="order_quantity"
+                                        type="xs:unsignedInt"
+                                        minOccurs="0" />
+                            <xs:element name="confirmed_quantity"
+                                        type="xs:unsignedInt"
+                                        minOccurs="0" />
+                            <xs:element name="order_from_supplier_quantity"
+                                        type="xs:unsignedInt"
+                                        minOccurs="0" />
+                        </xs:sequence>
+                        <xs:attribute name="id"
+                                      type="xs:unsignedByte"
+                                      use="optional" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="order_id"
+                            type="xs:unsignedInt" />
+                <xs:element name="customer_company"
+                            type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
