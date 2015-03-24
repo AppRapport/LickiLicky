@@ -45,7 +45,7 @@ import javax.jms.*;
 
 import com.tibco.tibjms.Tibjms;
 
-public class TargetConsumer
+public class WalmartConsumer
        implements ExceptionListener
 {
     /*-----------------------------------------------------------------------
@@ -55,7 +55,7 @@ public class TargetConsumer
      String           serverUrl   = null;
      String           userName    = null;
      String           password    = null;
-     String           name        = "target.invoice";
+     String           name        = "walmart.invoice";
      boolean          useTopic    = true;
      int              ackMode     = Session.AUTO_ACKNOWLEDGE;
 
@@ -67,7 +67,7 @@ public class TargetConsumer
       MessageConsumer msgConsumer = null;
       Destination     destination = null;
 
-    public TargetConsumer(String[] args)
+    public WalmartConsumer(String[] args)
     {
         parseArgs(args);
 
@@ -103,7 +103,7 @@ public class TargetConsumer
      *----------------------------------------------------------------------*/
     void usage()
     {
-        System.err.println("\nUsage: TargetConsumer [options] [ssl options]");
+        System.err.println("\nUsage: WalmartConsumer [options] [ssl options]");
         System.err.println("");
         System.err.println("   where options are:");
         System.err.println("");
@@ -267,7 +267,9 @@ public class TargetConsumer
                 ackMode == Tibjms.EXPLICIT_CLIENT_DUPS_OK_ACKNOWLEDGE)
                 msg.acknowledge();
 
-            System.err.println("Received message: "+ msg);
+            //System.err.println("Received message: "+ msg);
+			CustomerXMLParser parser = new CustomerXMLParser(msg.toString());
+			//CustomerXMLParser(msg);
         }
 
         /* close the connection */
@@ -279,6 +281,6 @@ public class TargetConsumer
      *----------------------------------------------------------------------*/
     public static void main(String[] args)
     {
-        new TargetConsumer(args);
+        new WalmartConsumer(args);
     }
 }

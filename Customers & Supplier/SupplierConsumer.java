@@ -267,7 +267,9 @@ public class SupplierConsumer
                 ackMode == Tibjms.EXPLICIT_CLIENT_DUPS_OK_ACKNOWLEDGE)
                 msg.acknowledge();
 
-            System.err.println("Received message: "+ msg);
+            //System.err.println("Received message: "+ msg);
+			SupplierXMLParser parse = new SupplierXMLParser(msg.toString());
+			//SupplierXMLParser(msg);
         }
 
         /* close the connection */
