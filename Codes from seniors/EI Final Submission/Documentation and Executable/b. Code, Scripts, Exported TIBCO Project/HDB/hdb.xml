@@ -1,0 +1,11 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<season_parking xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <vehicle_no>SDN1816K</vehicle_no>
+  <vehicle_type>CAR</vehicle_type> 
+  <owner_type>OWNER</owner_type> 
+  <parking id="ss2" type="mutistory">
+	<purchase_type>resident</purchase_type> 
+    <start_date>2012-02-01</start_date>
+    <end_date>2012-02-03</end_date>
+  </parking>  
+</season_parking>

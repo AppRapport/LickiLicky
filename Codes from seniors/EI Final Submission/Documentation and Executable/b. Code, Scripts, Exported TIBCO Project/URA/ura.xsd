@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="motocar_parking">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="vehicle_no"/>
+        <xs:element ref="relationship_owner"/>
+        <xs:element ref="owner_type"/>
+        <xs:element ref="parking_id"/>
+        <xs:element ref="parking_place"/>
+        <xs:element ref="session_class"/>
+        <xs:element ref="session_time"/>
+        <xs:element ref="session_rate"/>
+        <xs:element ref="commencement_date"/>
+        <xs:element ref="end_date"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="vehicle_no" type="xs:string"/>
+  <xs:element name="relationship_owner" type="xs:string"/>
+  <xs:element name="owner_type" type="xs:string"/>
+  <xs:element name="parking_id" type="xs:string"/>
+  <xs:element name="parking_place" type="xs:string"/>
+  <xs:element name="session_class" type="xs:string"/>
+  <xs:element name="session_time" type="xs:string"/>
+  <xs:element name="session_rate" type="xs:string"/>
+  <xs:element name="commencement_date" type="xs:date"/>
+  <xs:element name="end_date" type="xs:date"/>
+</xs:schema>

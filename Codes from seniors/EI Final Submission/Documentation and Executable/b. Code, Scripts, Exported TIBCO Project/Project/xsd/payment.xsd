@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="payment">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="ownername"/>
+        <xs:element ref="ownernric"/>
+        <xs:element ref="vehicleno"/>
+        <xs:element ref="offencetype"/>
+        <xs:element ref="offenceprice"/>
+        <xs:element ref="offencetime"/>
+        <xs:element ref="offencedesc"/>
+        <xs:element ref="company"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ownername" type="xs:string"/>
+  <xs:element name="ownernric" type="xs:string"/>
+  <xs:element name="vehicleno" type="xs:string"/>
+  <xs:element name="offencetype" type="xs:string"/>
+  <xs:element name="offenceprice" type="xs:string"/>
+  <xs:element name="offencetime" type="xs:string"/>
+  <xs:element name="offencedesc" type="xs:string"/>
+  <xs:element name="company" type="xs:string"/>
+</xs:schema>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="urasummon">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="vehname"/>
+        <xs:element ref="ownernric"/>
+        <xs:element ref="vehno"/>
+        <xs:element ref="type"/>
+        <xs:element ref="price"/>
+        <xs:element ref="time"/>
+        <xs:element ref="offencedetail"/>
+        <xs:element ref="carparkid"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="vehname" type="xs:string"/>
+  <xs:element name="ownernric" type="xs:string"/>
+  <xs:element name="vehno" type="xs:string"/>
+  <xs:element name="type" type="xs:string"/>
+  <xs:element name="price" type="xs:string"/>
+  <xs:element name="time" type="xs:string"/>
+  <xs:element name="offencedetail" type="xs:string"/>
+  <xs:element name="carparkid" type="xs:string"/>
+</xs:schema>

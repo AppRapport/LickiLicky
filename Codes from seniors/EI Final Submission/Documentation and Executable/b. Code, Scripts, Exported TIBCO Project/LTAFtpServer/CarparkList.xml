@@ -1,0 +1,29 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<CarparkList xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation = "C:/EI/Project/xsd/CarparkList.xsd">  
+	<carpark>   
+		<carpark_id>BIBE36</carpark_id>  
+		<company>hdb</company>  
+	</carpark>
+	<carpark>   
+		<carpark_id>BIBE37</carpark_id>  
+		<company>hdb</company>  
+	</carpark>
+	<carpark>   
+		<carpark_id>BIBE38</carpark_id> 
+		<company>hdb</company>  
+	</carpark>
+	<carpark>   
+		<carpark_id>U001</carpark_id>  
+		<company>ura</company>  
+	</carpark>
+	<carpark>   
+		<carpark_id>U002</carpark_id>  
+		<company>ura</company>  
+	</carpark>
+	<carpark>   
+		<carpark_id>U003</carpark_id> 
+		<company>ura</company>  
+	</carpark>
+	<validfrom>2012-04-03 00:00:00</validfrom>
+	<validtill>2012-04-03 23:59:59</validtill>
+</CarparkList>

@@ -1,0 +1,846 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx5="http://www.tibco.com/ns/no_namespace_schema_location/xsd/ura.xsd" xmlns:pfx4="http://www.tibco.com/ns/no_namespace_schema_location/xsd/hdb.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/namespaces/tnt/plugins/file/v2" xmlns:pfx2="http://www.tibco.com/ns/no_namespace_schema_location/xsd/CarparkList.xsd" xmlns:pfx="http://www.tibco.com/ns/no_namespace_schema_location/xsd/summon.xsd">
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/xsd/summon.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/xsd/CarparkList.xsd" schemaLocation="/xsd/CarparkList.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/xsd/summon.xsd" schemaLocation="/xsd/summon.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/xsd/hdb.xsd" schemaLocation="/xsd/hdb.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/xsd/ura.xsd" schemaLocation="/xsd/ura.xsd"/>
+    <pd:name>Main Process.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>65</pd:x>
+        <pd:y>36</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>request.summon</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/JMS Connection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1205</pd:endX>
+    <pd:endY>540</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1333097155352</pd:targetNamespace>
+    <pd:activity name="Parse XML (summon.xsd)">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>180</pd:x>
+        <pd:y>45</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx:summon"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Read File (CarparkList.xml)">
+        <pd:type>com.tibco.plugin.file.FileReadActivity</pd:type>
+        <pd:resourceType>ae.activities.FileReadActivity</pd:resourceType>
+        <pd:x>290</pd:x>
+        <pd:y>44</pd:y>
+        <config>
+            <encoding>text</encoding>
+        </config>
+        <pd:inputBindings>
+            <pfx3:ReadActivityInputClass>
+                <fileName>
+                    <xsl:value-of select="&quot;C:\EI\Project\data\CarparkList.xml&quot;"/>
+                </fileName>
+            </pfx3:ReadActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML (CarparkList.xsd)">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>430</pd:x>
+        <pd:y>43</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx2:CarparkList"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Read-File-CarparkList.xml/ns:ReadActivityOutputTextClass/fileContent/textContent"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="FTP Get">
+        <pd:type>com.tibco.plugin.ftp.FTPGetActivity</pd:type>
+        <pd:resourceType>ae.activities.FTPGetActivityUI</pd:resourceType>
+        <pd:x>431</pd:x>
+        <pd:y>165</pd:y>
+        <config>
+            <Timeout>120000</Timeout>
+            <isBinary>false</isBinary>
+            <Overwrite>true</Overwrite>
+            <useProcessData>false</useProcessData>
+            <SharedUserData>/FTP Connection.sharedftp</SharedUserData>
+        </config>
+        <pd:inputBindings>
+            <FTPGetInputDataFile>
+                <RemoteFileName>
+                    <xsl:value-of select="&quot;CarparkList.xml&quot;"/>
+                </RemoteFileName>
+                <LocalFileName>
+                    <xsl:value-of select="&quot;C:\EI\Project\data\CarparkList.xml&quot;"/>
+                </LocalFileName>
+            </FTPGetInputDataFile>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Read-File (CarparkList.xml) - 2">
+        <pd:type>com.tibco.plugin.file.FileReadActivity</pd:type>
+        <pd:resourceType>ae.activities.FileReadActivity</pd:resourceType>
+        <pd:x>539</pd:x>
+        <pd:y>52</pd:y>
+        <config>
+            <encoding>text</encoding>
+        </config>
+        <pd:inputBindings>
+            <pfx3:ReadActivityInputClass>
+                <fileName>
+                    <xsl:value-of select="&quot;C:\EI\Project\data\CarparkList.xml&quot;"/>
+                </fileName>
+            </pfx3:ReadActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML (CarparkList.xsd) - 2">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>651</pd:x>
+        <pd:y>50</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx2:CarparkList"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Read-File-CarparkList.xml---2/ns:ReadActivityOutputTextClass/fileContent/textContent"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>174</pd:x>
+        <pd:y>219</pd:y>
+        <pd:width>950</pd:width>
+        <pd:height>701</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Parse-XML-CarparkList.xsd---2/CarparkList/carpark</pd:over>
+            <pd:iterationElementSlot>iter</pd:iterationElementSlot>
+            <pd:indexSlot>i</pd:indexSlot>
+            <pd:activityOutputName/>
+            <pd:accumulateOutput>false</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Render XML (CarparkList.xsd)</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>URA Offences Process - Expired Season Parking</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>NonSeasonParkingOffences</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>URA Offences Process - No Season Parking</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>URA Reply Process - No offence</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>HDB Offences Process - No Season Parking</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>HDB Reply Process - No offence</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>HDB Offences Process - Expired Season Parking</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Render XML (CarparkList.xsd)</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>URA HTTP Request</pd:from>
+            <pd:to>Parse-XML (ura.xsd)</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Render XML (CarparkList.xsd)</pd:from>
+            <pd:to>URA HTTP Request</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>if ($iter/carpark/carpark_id = $Parse-XML-summon.xsd/summon/carparkid and $iter/carpark/company = "ura" and contains($Parse-XML-summon.xsd/summon/offence, "18"))  then true() else false()</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>HDB HTTP Request</pd:from>
+            <pd:to>Parse XML (hdb.xsd)</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Parse XML (hdb.xsd)</pd:from>
+            <pd:to>HDB Offences Process - No Season Parking</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Parse XML (hdb.xsd)</pd:from>
+            <pd:to>HDB Offences Process - Expired Season Parking</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Parse XML (hdb.xsd)</pd:from>
+            <pd:to>HDB Reply Process - No offence</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>if (tib:compare-date(current-date(),$Parse-XML-hdb.xsd/season_parking/parking/end_date) = "-1" ) then true () else false()</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Parse-XML (ura.xsd)</pd:from>
+            <pd:to>URA Reply Process - No offence</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>if (tib:compare-date(current-date(),$Parse-XML-ura.xsd/motocar_parking/end_date) = "-1" ) then true () else false()</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Parse-XML (ura.xsd)</pd:from>
+            <pd:to>URA Offences Process - Expired Season Parking</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Parse-XML (ura.xsd)</pd:from>
+            <pd:to>URA Offences Process - No Season Parking</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Render XML (CarparkList.xsd)</pd:from>
+            <pd:to>HDB HTTP Request</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>if ($iter/carpark/carpark_id = $Parse-XML-summon.xsd/summon/carparkid and $iter/carpark/company = "hdb" and contains($Parse-XML-summon.xsd/summon/offence, "18"))  then true() else false()</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Render XML (CarparkList.xsd)</pd:from>
+            <pd:to>NonSeasonParkingOffences</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>if ($iter/carpark/carpark_id = $Parse-XML-summon.xsd/summon/carparkid  and not (contains($Parse-XML-summon.xsd/summon/offence, "18")))  then true() else false()</pd:xpath>
+        </pd:transition>
+        <pd:activity name="Render XML (CarparkList.xsd)">
+            <pd:type>com.tibco.plugin.xml.XMLRendererActivity</pd:type>
+            <pd:resourceType>ae.activities.XMLRendererActivity</pd:resourceType>
+            <pd:x>271</pd:x>
+            <pd:y>586</pd:y>
+            <config>
+                <renderAsText>text</renderAsText>
+                <validateInput>false</validateInput>
+                <term ref="pfx2:carpark"/>
+            </config>
+            <pd:inputBindings>
+                <carpark>
+                    <carpark_id>
+                        <xsl:value-of select="$iter/carpark/carpark_id"/>
+                    </carpark_id>
+                    <company>
+                        <xsl:value-of select="$iter/carpark/company"/>
+                    </company>
+                </carpark>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="HDB HTTP Request">
+            <pd:type>com.tibco.plugin.http.client.HttpRequestActivity</pd:type>
+            <pd:resourceType>httppalette.httpRequest</pd:resourceType>
+            <pd:x>250</pd:x>
+            <pd:y>847</pd:y>
+            <config>
+                <inputOutputVersion>5.3.0</inputOutputVersion>
+                <newMimeSupport>true</newMimeSupport>
+                <serverhost>hdbseasonparking.appspot.com</serverhost>
+                <serverport>80</serverport>
+                <customField>
+                    <row>
+                        <attribute>vehicleno</attribute>
+                        <attributeType>string</attributeType>
+                        <attributeCard>required</attributeCard>
+                    </row>
+                    <row>
+                        <attribute>carpark</attribute>
+                        <attributeType>string</attributeType>
+                        <attributeCard>required</attributeCard>
+                    </row>
+                </customField>
+                <acceptRedirects>true</acceptRedirects>
+                <InputHeaders>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Cookie" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </InputHeaders>
+                <OutputHeaders>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Allow" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Encoding" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Date" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </OutputHeaders>
+            </config>
+            <pd:inputBindings>
+                <RequestActivityInput>
+                    <parameters>
+                        <vehicleno>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/vehno"/>
+                        </vehicleno>
+                        <carpark>
+                            <xsl:value-of select="$iter/carpark/carpark_id"/>
+                        </carpark>
+                    </parameters>
+                </RequestActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="URA HTTP Request">
+            <pd:type>com.tibco.plugin.http.client.HttpRequestActivity</pd:type>
+            <pd:resourceType>httppalette.httpRequest</pd:resourceType>
+            <pd:x>256</pd:x>
+            <pd:y>299</pd:y>
+            <config>
+                <inputOutputVersion>5.3.0</inputOutputVersion>
+                <newMimeSupport>true</newMimeSupport>
+                <serverhost>uraseasonparking.appspot.com</serverhost>
+                <serverport>80</serverport>
+                <customField>
+                    <row>
+                        <attribute>ppcode</attribute>
+                        <attributeType>string</attributeType>
+                        <attributeCard>optional</attributeCard>
+                    </row>
+                    <row>
+                        <attribute>vno</attribute>
+                        <attributeType>string</attributeType>
+                        <attributeCard>optional</attributeCard>
+                    </row>
+                </customField>
+                <InputHeaders>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Cookie" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </InputHeaders>
+                <OutputHeaders>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Allow" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Encoding" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Date" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </OutputHeaders>
+            </config>
+            <pd:inputBindings>
+                <RequestActivityInput>
+                    <parameters>
+                        <ppcode>
+                            <xsl:value-of select="$iter/carpark/carpark_id"/>
+                        </ppcode>
+                        <vno>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/vehno"/>
+                        </vno>
+                    </parameters>
+                </RequestActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Parse-XML (ura.xsd)">
+            <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+            <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+            <pd:x>377</pd:x>
+            <pd:y>303</pd:y>
+            <config>
+                <inputStyle>text</inputStyle>
+                <xsdVersion>default</xsdVersion>
+                <validateOutput>true</validateOutput>
+                <term ref="pfx5:motocar_parking"/>
+            </config>
+            <pd:inputBindings>
+                <xmlString>
+                    <xsl:value-of select="$URA-HTTP-Request/RequestActivityOutput/asciiContent"/>
+                </xmlString>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Parse XML (hdb.xsd)">
+            <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+            <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+            <pd:x>373</pd:x>
+            <pd:y>854</pd:y>
+            <config>
+                <inputStyle>text</inputStyle>
+                <xsdVersion>default</xsdVersion>
+                <validateOutput>true</validateOutput>
+                <term ref="pfx4:season_parking"/>
+            </config>
+            <pd:inputBindings>
+                <xmlString>
+                    <xsl:value-of select="$HDB-HTTP-Request/RequestActivityOutput/asciiContent"/>
+                </xmlString>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="HDB Offences Process - No Season Parking">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>529</pd:x>
+            <pd:y>684</pd:y>
+            <config>
+                <processName>/Offences Process.process</processName>
+            </config>
+            <pd:inputBindings>
+                <group>
+                    <carparkid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/carparkid"/>
+                    </carparkid>
+                    <vehno>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/vehno"/>
+                    </vehno>
+                    <offencetype>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/offence"/>
+                    </offencetype>
+                    <company>
+                        <xsl:value-of select="$iter/carpark/company"/>
+                    </company>
+                    <JMSMsgID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSMessageID"/>
+                    </JMSMsgID>
+                    <JMSDest>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSReplyTo"/>
+                    </JMSDest>
+                    <sid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/sid"/>
+                    </sid>
+                    <seasonparking>
+                        <xsl:value-of select="&quot;false&quot;"/>
+                    </seasonparking>
+                </group>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="HDB Offences Process - Expired Season Parking">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>378</pd:x>
+            <pd:y>652</pd:y>
+            <config>
+                <processName>/Offences Process.process</processName>
+            </config>
+            <pd:inputBindings>
+                <group>
+                    <carparkid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/carparkid"/>
+                    </carparkid>
+                    <vehno>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/vehno"/>
+                    </vehno>
+                    <offencetype>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/offence"/>
+                    </offencetype>
+                    <company>
+                        <xsl:value-of select="$iter/carpark/company"/>
+                    </company>
+                    <JMSMsgID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSMessageID"/>
+                    </JMSMsgID>
+                    <JMSDest>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSReplyTo"/>
+                    </JMSDest>
+                    <sid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/sid"/>
+                    </sid>
+                    <seasonparking>
+                        <xsl:value-of select="&quot;false&quot;"/>
+                    </seasonparking>
+                </group>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="HDB Reply Process - No offence">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>632</pd:x>
+            <pd:y>811</pd:y>
+            <config>
+                <processName>/Reply Process.process</processName>
+            </config>
+            <pd:inputBindings>
+                <group>
+                    <summon>
+                        <sid>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/sid"/>
+                        </sid>
+                        <vehno>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/vehno"/>
+                        </vehno>
+                        <carparkid>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/carparkid"/>
+                        </carparkid>
+                        <time>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/time"/>
+                        </time>
+                        <seasonpark>
+                            <xsl:value-of select="&quot;true&quot;"/>
+                        </seasonpark>
+                        <fineapplicable>
+                            <xsl:value-of select="&quot;0&quot;"/>
+                        </fineapplicable>
+                        <offence>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/offence"/>
+                        </offence>
+                        <fineamt>
+                            <xsl:value-of select="&quot;0&quot;"/>
+                        </fineamt>
+                    </summon>
+                    <xsl:if test="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSMessageID">
+                        <JMSReplyMsgID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSMessageID"/>
+                        </JMSReplyMsgID>
+                    </xsl:if>
+                    <JMSDest>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSReplyTo"/>
+                    </JMSDest>
+                </group>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="URA Reply Process - No offence">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>892</pd:x>
+            <pd:y>307</pd:y>
+            <config>
+                <processName>/Reply Process.process</processName>
+            </config>
+            <pd:inputBindings>
+                <group>
+                    <summon>
+                        <sid>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/sid"/>
+                        </sid>
+                        <vehno>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/vehno"/>
+                        </vehno>
+                        <carparkid>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/sid"/>
+                        </carparkid>
+                        <time>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/time"/>
+                        </time>
+                        <seasonpark>
+                            <xsl:value-of select="&quot;true&quot;"/>
+                        </seasonpark>
+                        <fineapplicable>
+                            <xsl:value-of select="&quot;0&quot;"/>
+                        </fineapplicable>
+                        <offence>
+                            <xsl:value-of select="$Parse-XML-summon.xsd/summon/offence"/>
+                        </offence>
+                        <fineamt>
+                            <xsl:value-of select="&quot;0&quot;"/>
+                        </fineamt>
+                    </summon>
+                    <xsl:if test="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSMessageID">
+                        <JMSReplyMsgID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSMessageID"/>
+                        </JMSReplyMsgID>
+                    </xsl:if>
+                    <JMSDest>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSReplyTo"/>
+                    </JMSDest>
+                </group>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="URA Offences Process - Expired Season Parking">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>605</pd:x>
+            <pd:y>391</pd:y>
+            <config>
+                <processName>/Offences Process.process</processName>
+            </config>
+            <pd:inputBindings>
+                <group>
+                    <carparkid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/carparkid"/>
+                    </carparkid>
+                    <vehno>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/vehno"/>
+                    </vehno>
+                    <offencetype>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/offence"/>
+                    </offencetype>
+                    <company>
+                        <xsl:value-of select="$iter/carpark/company"/>
+                    </company>
+                    <JMSMsgID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSMessageID"/>
+                    </JMSMsgID>
+                    <JMSDest>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSReplyTo"/>
+                    </JMSDest>
+                    <sid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/sid"/>
+                    </sid>
+                    <seasonparking>
+                        <xsl:value-of select="&quot;false&quot;"/>
+                    </seasonparking>
+                </group>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="URA Offences Process - No Season Parking">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>761</pd:x>
+            <pd:y>343</pd:y>
+            <config>
+                <processName>/Offences Process.process</processName>
+            </config>
+            <pd:inputBindings>
+                <group>
+                    <carparkid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/carparkid"/>
+                    </carparkid>
+                    <vehno>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/vehno"/>
+                    </vehno>
+                    <offencetype>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/offence"/>
+                    </offencetype>
+                    <company>
+                        <xsl:value-of select="$iter/carpark/company"/>
+                    </company>
+                    <JMSMsgID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSMessageID"/>
+                    </JMSMsgID>
+                    <JMSDest>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSReplyTo"/>
+                    </JMSDest>
+                    <sid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/sid"/>
+                    </sid>
+                    <seasonparking>
+                        <xsl:value-of select="&quot;false&quot;"/>
+                    </seasonparking>
+                </group>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="NonSeasonParkingOffences">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>458</pd:x>
+            <pd:y>477</pd:y>
+            <config>
+                <processName>/Offences Process.process</processName>
+            </config>
+            <pd:inputBindings>
+                <group>
+                    <carparkid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/carparkid"/>
+                    </carparkid>
+                    <vehno>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/vehno"/>
+                    </vehno>
+                    <offencetype>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/offence"/>
+                    </offencetype>
+                    <company>
+                        <xsl:value-of select="$iter/carpark/company"/>
+                    </company>
+                    <JMSMsgID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSMessageID"/>
+                    </JMSMsgID>
+                    <JMSDest>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/JMSHeaders/ns1:JMSReplyTo"/>
+                    </JMSDest>
+                    <sid>
+                        <xsl:value-of select="$Parse-XML-summon.xsd/summon/sid"/>
+                    </sid>
+                    <seasonparking>
+                        <xsl:value-of select="&quot;N/A&quot;"/>
+                    </seasonparking>
+                </group>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>Parse XML (summon.xsd)</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML (summon.xsd)</pd:from>
+        <pd:to>Read File (CarparkList.xml)</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Read File (CarparkList.xml)</pd:from>
+        <pd:to>Parse XML (CarparkList.xsd)</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML (CarparkList.xsd)</pd:from>
+        <pd:to>FTP Get</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>if (tib:compare-dateTime(current-dateTime(), concat(substring-before($Parse-XML-CarparkList.xsd/CarparkList/validtill, " "), "T",substring-after($Parse-XML-CarparkList.xsd/CarparkList/validtill, " ") )) &gt;= "0" ) then true () else false()</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML (CarparkList.xsd)</pd:from>
+        <pd:to>Read-File (CarparkList.xml) - 2</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>FTP Get</pd:from>
+        <pd:to>Read-File (CarparkList.xml) - 2</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Read-File (CarparkList.xml) - 2</pd:from>
+        <pd:to>Parse XML (CarparkList.xsd) - 2</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML (CarparkList.xsd) - 2</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

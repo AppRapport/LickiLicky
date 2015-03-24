@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <xs:element name="summon">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="sid"/>
+        <xs:element ref="vehno"/>
+        <xs:element ref="carparkid"/>
+        <xs:element ref="time"/>
+        <xs:element ref="seasonpark"/>
+        <xs:element ref="fineapplicable"/>
+        <xs:element ref="offence"/>
+        <xs:element ref="fineamt"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="sid" type="xs:string"/>
+  <xs:element name="vehno" type="xs:string"/>
+  <xs:element name="carparkid" type="xs:string"/>
+  <xs:element name="time" type="xs:string"/>
+  <xs:element name="seasonpark" type="xs:string"/>
+  <xs:element name="fineapplicable" type="xs:string"/>
+  <xs:element name="offence" type="xs:string"/>
+  <xs:element name="fineamt" type="xs:string"/>
+</xs:schema>

@@ -1,0 +1,15 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<motocar_parking xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <vehicle_no>SDN1816K</vehicle_no>
+  <relationship_owner>OWNER</relationship_owner> 
+  <owner_type>OWNER</owner_type>
+  <parking_id>PP001</parking_id> 
+  <parking_place>ANG MO KIO AVENUE 1 HEAVY VEHICLE PARK</parking_place> 
+  <session_class>E1</session_class>
+  <session_time>7PM to 7AM (24hrs)</session_time>
+  <session_rate>$60</session_rate>
+  <commencement_month>3</commencement_month>
+  <commencement_year>2012</commencement_year>
+  <end_month>4</end_month>
+  <end_year>2012</end_year>
+</motocar_parking>

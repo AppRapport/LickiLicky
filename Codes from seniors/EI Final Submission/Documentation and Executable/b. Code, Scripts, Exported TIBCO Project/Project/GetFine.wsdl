@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://ws.apache.org/axis2" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://ws.apache.org/axis2">
+    <wsdl:documentation>GetFine</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://ws.apache.org/axis2">
+            <xs:element name="getFineRate">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="args0" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="args1" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getFineRateResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="getFineRateRequest">
+        <wsdl:part name="parameters" element="ns:getFineRate"/>
+    </wsdl:message>
+    <wsdl:message name="getFineRateResponse">
+        <wsdl:part name="parameters" element="ns:getFineRateResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="GetFinePortType">
+        <wsdl:operation name="getFineRate">
+            <wsdl:input message="ns:getFineRateRequest" wsaw:Action="urn:getFineRate"/>
+            <wsdl:output message="ns:getFineRateResponse" wsaw:Action="urn:getFineRateResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="GetFineSoap11Binding" type="ns:GetFinePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getFineRate">
+            <soap:operation soapAction="urn:getFineRate" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="GetFineSoap12Binding" type="ns:GetFinePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getFineRate">
+            <soap12:operation soapAction="urn:getFineRate" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="GetFineHttpBinding" type="ns:GetFinePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="getFineRate">
+            <http:operation location="getFineRate"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="GetFine">
+        <wsdl:port name="GetFineHttpSoap11Endpoint" binding="ns:GetFineSoap11Binding">
+            <soap:address location="http://localhost:8080/axis2/services/GetFine.GetFineHttpSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="GetFineHttpSoap12Endpoint" binding="ns:GetFineSoap12Binding">
+            <soap12:address location="http://localhost:8080/axis2/services/GetFine.GetFineHttpSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="GetFineHttpEndpoint" binding="ns:GetFineHttpBinding">
+            <http:address location="http://localhost:8080/axis2/services/GetFine.GetFineHttpEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

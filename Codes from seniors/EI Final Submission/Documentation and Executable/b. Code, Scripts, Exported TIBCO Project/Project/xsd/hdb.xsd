@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="season_parking">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="vehicle_no"/>
+        <xs:element ref="vehicle_type"/>
+        <xs:element ref="owner_type"/>
+        <xs:element ref="parking"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="vehicle_no" type="xs:string"/>
+  <xs:element name="vehicle_type" type="xs:string"/>
+  <xs:element name="owner_type" type="xs:string"/>
+  <xs:element name="parking">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="purchase_type"/>
+        <xs:element ref="start_date"/>
+        <xs:element ref="end_date"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+      <xs:attribute name="type" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="purchase_type" type="xs:string"/>
+  <xs:element name="start_date" type="xs:date"/>
+  <xs:element name="end_date" type="xs:date"/>
+</xs:schema>
