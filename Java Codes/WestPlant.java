@@ -1,16 +1,21 @@
 import javax.jms.*;
 import java.sql.*;
 import java.util.*;
-import java.io.File;
+import java.io.*;
+import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class WestPlant
-implements ExceptionListener {
+public class WestPlant implements ExceptionListener {
     /*-----------------------------------------------------------------------
      * Parameters
      *----------------------------------------------------------------------*/
@@ -22,7 +27,6 @@ implements ExceptionListener {
     boolean useTopic = true;
     PreparedStatement updatePstmt = null;
     PreparedStatement queryPstmt = null;
-   	ArrayList <Order> orderList = null;
 
     /*-----------------------------------------------------------------------
     * Variables
@@ -32,7 +36,7 @@ implements ExceptionListener {
     MessageConsumer msgConsumer = null;
     Destination destination = null;
 
-    public CRMS(String[] args) {
+    public WestPlant(String[] args) {
         parseArgs(args);
 
         try {
@@ -168,7 +172,7 @@ implements ExceptionListener {
 
             if (msg == null)
                 break;
-			System.err.println("Received message: " + msg);
+			//System.err.println("Received message: " + msg);
             onMessage(msg);     //karway
             
         }
@@ -184,100 +188,36 @@ implements ExceptionListener {
     // Handle the message when received.
     public void onMessage(Message message) {
         try {
-            if ((message instanceof TextMessage) && (message.getJMSReplyTo() != null)) {
-                TextMessage requestMessage = (TextMessage) message;
-				System.out.println();
-                System.out.println("Received request");
-                System.out.println("\tTime:       " + System.currentTimeMillis() + " ms");
-                System.out.println("\tMessage ID: " + requestMessage.getJMSMessageID());
-                System.out.println("\tCorrel. ID: " + requestMessage.getJMSCorrelationID());
-                System.out.println("\tReply to:   " + requestMessage.getJMSReplyTo());
-                System.out.println("\tContents:   " + requestMessage.getText());
+        	TextMessage requestMessage = (TextMessage) message;
+			String messageToIM = processWest(requestMessage.getText()); 
 
-                 // Prepare reply message and send reply message
-                String xmlString = requestMessage.getText();
-                Destination replyDestination = message.getJMSReplyTo();
-                MessageProducer replyProducer = session.createProducer(replyDestination);                
-                TextMessage replyMessage = session.createTextMessage();
+			Destination replyDestination = message.getJMSReplyTo();
+            MessageProducer replyProducer = session.createProducer(replyDestination);
+            TextMessage replyMessage = session.createTextMessage();
+			replyMessage.setJMSCorrelationID(requestMessage.getJMSMessageID());
+			replyMessage.setText(messageToIM);
+			replyProducer.send(replyMessage);
 
-                parseXmlFile(xmlString);
-            } else {
-                    System.out.println("Invalid message detected");
-                    System.out.println("\tType:       " + message.getClass().getName());
-                    System.out.println("\tTime:       " + System.currentTimeMillis() + " ms");
-                    System.out.println("\tMessage ID: " + message.getJMSMessageID());
-                    System.out.println("\tCorrel. ID: " + message.getJMSCorrelationID());
-                    System.out.println("\tReply to:   " + message.getJMSReplyTo());
-
-                    message.setJMSCorrelationID(message.getJMSMessageID());
-            }
-        } catch (JMSException e) {
-            e.printStackTrace();
-        } catch (Exception err){
+        }	catch (Exception err){
 			err.printStackTrace();
 			System.out.println("Error: " + err);
 		}
     }
 	
 	public static void main(String args[]){
-		new CRMS(args);
+		new WestPlant(args);
 	}
 
-	public void parseXmlFile(String xmlString) {
-		System.out.println("XMLString: " + xmlString);
-
-		//get the factory
+	public String processWest(String xmlString) {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		
 		try {
-
-			//variables
-			String firstName;
-			String lastName;
-			String region;
-			String orderId;
-			String description;
-			String street;
-			String city;
-			String state;
-			int quantitydb;
-			int postal;
-			int item_id;
-			int quantity;
-
-			//Using factory get an instance of document builder
+			DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-
 			InputSource inputStream = new InputSource(new StringReader(xmlString));
-
-			//parse using builder to get DOM representation of the XML file
 			Document dom = db.parse(inputStream);
 
-            //Get the item element by tag name directly
-            Node items = doc.getElementsByTagName("item").item(0);
-
-            // loop the staff child node of item details
-            NodeList itemList = items.getChildNodes();
-
-            for (int i = 0; i < list.getLength(); i++) {
-                Node node = itemList.item(i);
-
-                if ("description".equals(node.getNodeName())) {
-                    description = node.getTextContent();
-                    System.out.println("description: " + description);
-                }
-
-                if ("order_quantity".equals(node.getNodeName())) {
-                    quantity = node.getTextContent();
-                    System.out.println("quantity: " + city);
-                }
-
-                if ("id".equals(node.getNodeName())) {
-                    item_id = node.getTextContent();
-                    System.out.println("item id: " + state);
-                }
-            }
-
-            // Setting up database related variables
+			// Setting up database related variables
             String dbURL = "jdbc:mysql://localhost:3306/west_inventorydb";
             String username = "root";
             String password = "";
@@ -288,113 +228,246 @@ implements ExceptionListener {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(dbURL, username, password);
 
-            String queryInventory = "SELECT `quantity` FROM `inventory` WHERE `item_id` = ?"
+			//variables
+            int quantitydb;
+			int quantity;
+			int orderId;
+			int postal;
+			int lowerThreshold;
+			int upperThreshold;
+			int orderToSupplier;
+			boolean isOrdered;
+			String firstname;
+			String lastname;
+			String company;
+			String region;
+			String city;
+			String street;
+			String messageToPass;
+			String state;
+			String itemTemplate = "";
 
-            try {
-	            pmst = conn.prepareStatement(queryInventory);
-				pmst.setString(1, item_id);
-				rs = pmst.executeQuery();
+            Node items = dom.getElementsByTagName("item").item(0);
 
-				while (rs.next()) {
-	              	quantitydb = rs.getInt(1);
-	            }
+            Node order = dom.getElementsByTagName("order").item(0);
 
-	            if(quantitydb >= quantity) {
-		            try {
-		            	int quantityUpdate = quantitydb - quantity;
-		            	String updateInventory = "UPDATE `inventory` SET `quantity`= ? WHERE `item_id`= ?";
+            Node address = dom.getElementsByTagName("ship_to_addr").item(0);
 
-			            psmt = conn.prepareStatement(updateInventory);
-			            psmt.setInt(1, quantityUpdate);
+            NodeList orderList = order.getChildNodes();
+
+            NodeList addressList = address.getChildNodes();
+
+            for (int i = 0; i < orderList.getLength(); i++) {
+                Node node = orderList.item(i);
+
+                if ("first_name".equals(node.getNodeName())) {
+                    firstname = node.getTextContent();
+                    System.out.println("firstname: " + firstname);
+                }
+
+                if ("last_name".equals(node.getNodeName())) {
+                    lastname = node.getTextContent();
+                    System.out.println("lastname: " + lastname);
+                }
+
+                if ("order_id".equals(node.getNodeName())) {
+                    orderId = Integer.parseInt(node.getTextContent());
+                    System.out.println("order id: " + orderId);
+                }
+
+                if ("customer_company".equals(node.getNodeName())) {
+                    company = node.getTextContent();
+                    System.out.println("customer company: " + company);
+                }
+
+                if ("region".equals(node.getNodeName())) {
+                    region = node.getTextContent();
+                    System.out.println("region: " + region);
+                }
+            }
+
+			for (int i = 0; i < addressList.getLength(); i++) {
+                Node node = addressList.item(i);
+
+                if ("ship_to_city".equals(node.getNodeName())) {
+                    city = node.getTextContent();
+                    System.out.println("city: " + city);
+                }
+
+                if ("ship_to_street".equals(node.getNodeName())) {
+                    street = node.getTextContent();
+                    System.out.println("street: " + street);
+                }
+
+                if ("ship_to_zip_code".equals(node.getNodeName())) {
+                    postal = Integer.parseInt(node.getTextContent());
+                    System.out.println("postal: " + postal);
+                }
+
+                if ("ship_to_state".equals(node.getNodeName())) {
+                    state = node.getTextContent();
+                    System.out.println("state: " + state);
+                }
+            }            
+
+            Element element = (Element) items;
+
+            /*
+            String description = element.getAttribute("description");
+            System.out.println("description: " + description);*/
+
+            int item_id = Integer.parseInt(element.getAttribute("id"));
+			System.out.println("item id: " + item_id);	
+
+            NodeList itemList = items.getChildNodes();
+
+            for (int i = 0; i < itemList.getLength(); i++) {
+                Node node = itemList.item(i);
+
+                if ("order_quantity".equals(node.getNodeName())) {
+                    quantity = Integer.parseInt(node.getTextContent());
+                    System.out.println("quantity: " + quantity);
+                }
+
+                if ("description".equals(node.getNodeName())) {
+                    description = node.getTextContent();
+                    System.out.println("description: " + description);
+                }
+
+                String queryInventory = "SELECT * FROM `inventory` WHERE `item_id` = ?"
+
+	            try {
+		            pmst = conn.prepareStatement(queryInventory);
+					pmst.setString(1, item_id);
+					rs = pmst.executeQuery();
+
+					while (rs.next()) {
+		              	quantitydb = rs.getInt(3);
+		              	is_ordered = rs.getBoolean(4);
+		              	upperThreshold = rs.getInt(5);
+		              	lowerThreshold = rs.getInt(6);
+		            }
+
+		            int quantityUpdate = quantitydb - quantity;
+	            	String updateInventory = "UPDATE `inventory` SET `quantity`= ? WHERE `item_id`= ?";
+
+		            psmt = conn.prepareStatement(updateInventory);
+		            psmt.setInt(1, quantityUpdate);
+		            psmt.setInt(2, item_id);
+		            psmt.executeUpdate();
+
+			        if(quantityUpdate < lowerThreshold && isOrdered == false) {
+				        String updateIsOrdered = "UPDATE `inventory` SET `is_ordered`= ? WHERE `item_id`= ?";	
+				        orderToSupplier = upperThreshold - quantityUpdate;
+
+			          	psmt = conn.prepareStatement(updateIsOrdered);
+			            psmt.setBoolean(1, true);
 			            psmt.setInt(2, item_id);
 			            psmt.executeUpdate();
 
-			            
-	        		} 
-	            } else {
+		          		//create xml with additional element confirmed_quantity = quantity, order_to_supplier = orderToSupplier
+		          		itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
+									  + "<confirmed_quantity>" + quantity + "</confirmed_quantity>"
+									  + "<order_from_supplier_quantity>" + orderToSupplier + "</order_from_supplier_quantity>"
+									  + "</item>"
+		          	} else {
+		          		//create xml with additional element confirmed_quantity = quantity, order_to_supplier = 0
+		           		itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
+									  + "<confirmed_quantity>" + quantity + "</confirmed_quantity>"
+									  + "<order_from_supplier_quantity>" + 0 + "</order_from_supplier_quantity>"
+									  + "</item>"
+		          	}
 
-	            }
-            } finally {
-            	ConnectionManager.close(conn, psmt, rs);
-       		 }
+		            /*if(quantitydb >= quantity) {
+			            try {
+			            	int quantityUpdate = quantitydb - quantity;
+			            	String updateInventory = "UPDATE `inventory` SET `quantity`= ? WHERE `item_id`= ?";
+
+				            psmt = conn.prepareStatement(updateInventory);
+				            psmt.setInt(1, quantityUpdate);
+				            psmt.setInt(2, item_id);
+				            psmt.executeUpdate();
+
+	 			          	//create xml with additional element confirmed_quantity = quantity, order_to_supplier = 0
+				            itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
+								  + "<confirmed_quantity>" + quantity + "</confirmed_quantity>"
+								  + "<order_from_supplier_quantity>" + 0 + "</order_from_supplier_quantity>"
+								  + "</item>"
+
+
+	 			          	if(quantityUpdate < lowerThreshold && isOrdered == false) {
+	 			          		String updateIsOrdered = "UPDATE `inventory` SET `is_ordered`= ? WHERE `item_id`= ?";	
+	 			          		orderToSupplier = upperThreshold - quantityUpdate;
+
+	 			          		psmt = conn.prepareStatement(updateIsOrdered);
+					            psmt.setBoolean(1, true);
+					            psmt.setInt(2, item_id);
+					            psmt.executeUpdate();
+
+	 			          		//create xml with additional element confirmed_quantity = quantity, order_to_supplier = orderToSupplier
+	 			          		itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
+								  + "<confirmed_quantity>" + quantity + "</confirmed_quantity>"
+								  + "<order_from_supplier_quantity>" + orderToSupplier + "</order_from_supplier_quantity>"
+								  + "</item>"
+	 			          	}
+		        		} 
+		            } else {
+		            	if(isOrdered == false) {
+		            		String updateIsOrdered = "UPDATE `inventory` SET `is_ordered`= ? WHERE `item_id`= ?";	
+		            		psmt = conn.prepareStatement(updateIsOrdered);
+				            psmt.setBoolean(1, true);
+				            psmt.setInt(2, item_id);
+				            psmt.executeUpdate();
+
+				            	//create xml with additional element confirmed_quantity = quantity, order_to_supplier = orderToSupplier
+				            	itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
+								  + "<confirmed_quantity>" + quantity + "</confirmed_quantity>"
+								  + "<order_from_supplier_quantity>" + orderToSupplier + "</order_from_supplier_quantity>"
+								  + "</item>"
+
+		            	} else {
+		            		 	//create xml with additional element confirmed_quantity = quantity, order_to_supplier = 0
+
+		            	}
+		            	String updateInventory = "UPDATE `inventory` SET `quantity`= ? WHERE `item_id`= ?";
+
+		            	psmt = conn.prepareStatement(updateInventory);
+				        psmt.setInt(1, 0);
+				        psmt.setInt(2, item_id);
+				        psmt.executeUpdate();
+
+				        //create xml with additional element confirmed_quantity = quantitydb, order_to_supplier = upperThreshold
+
+		            }*/
+	            } finally {
+	            	ConnectionManager.close(conn, psmt, rs);
+	       		}
+            }
+
+       		messageToPass = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+										+ "<!-- Created with Liquid XML 2014 Developer Bundle Edition (Education) 12.2.8.5459 (http://www.liquid-technologies.com) -->"
+										+ "<order xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"C:\EI\Labs\LickiLicky\reply_from_plant.xsd\">"
+										+ 	"<first_name>" + firstname + "</first_name>"
+										+ 	"<last_name>" + lastname + "</last_name>"
+										+ 	"<region>" + region + "</region>"
+										+ 	"<ship_to_addr>"
+										+       "<ship_to_street>" + street + "</ship_to_street>"
+										+		"<ship_to_city>" + city + "</ship_to_city>"
+										+       "<ship_to_zip_code>" + postal + "</ship_to_zip_code>"
+										+   "</ship_to_addr>"
+										+ 	itemTemplate  
+										+   "<order_id>" + orderId + "</order_id>"
+										+   "<customer_company>" + company + "</customer_company>"
+										+ "</order>"
 
            /*
 	        pmst.close(); // close the Statement
 	        conn.close(); // close the Connection
 			*/
 			
-		}catch(ParserConfigurationException pce) {
-			pce.printStackTrace();
-		}catch(SAXException se) {
-			se.printStackTrace();
-		}catch(IOException ioe) {
-			ioe.printStackTrace();
-		}catch(Exception e) {x-apple-ql-id://1ADD93EA-6C13-4981-86E2-E3FDEB4A459F/x-apple-ql-magic/3892FDC3-8F2F-4E10-AD61-DABEDE613922.png
+			return messageToPass;
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	/*
-	private void parseDocument(Document dom){
-		//get the root element
-		Element docEle = dom.getDocumentElement();
-
-		//get a nodelist of elements
-		NodeList nl = docEle.getElementsByTagName("Order");
-
-		if(nl != null && nl.getLength() > 0) {
-			for(int i = 0 ; i < nl.getLength(); i++) {
-
-				//get the Order element
-				Element el = (Element)nl.item(i);
-
-				//get the Order object
-				Order order = getOrder(el);
-
-				//add it to list
-				orderList.add(order);
-			}
-		}
-	}
-
-	//create Order object from the element and pass it back
-	private Order getOrder (Element element) {
-		//for each <order> element get text or double values of email, price, quantity, warehouse name
-		String email = getTextValue(element,"email");
-		int quantity = getIntValue(element,"quantity");
-		double price = getDoubleValue(element,"price");
-		String warehouse = element.getTextValue(element, "warehouse");
-		
-		/* used only when type is included in the xml   
-			String email = element.getAttribute("email");
-		*/
-
-		/*
-		//Create a new Employee with the value read from the xml nodes
-		Order order = new Order(email,quantity, price, warehouse);
-
-		return order;
-	}
-
-	private String getTextValue(Element ele, String tagName) {
-		String textVal = null;
-		NodeList nl = ele.getElementsByTagName(tagName);
-		if(nl != null && nl.getLength() > 0) {
-			Element el = (Element)nl.item(0);
-			textVal = el.getFirstChild().getNodeValue();
-		}
-
-		return textVal;
-	}
-
-	private int getIntValue(Element ele, String tagName) {
-		//in production application you would catch the exception
-		return Integer.parseInt(getTextValue(ele,tagName));
-	}
-
-
-	private int getDoubleValue(Element ele, String tagName) {
-		//in production application you would catch the exception
-		return Double.parseDouble(getTextValue(ele,tagName));
-	}*/	
 }
