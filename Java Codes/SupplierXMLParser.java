@@ -27,8 +27,9 @@ public class SupplierXMLParser {
 	byte id = "";
     */
     public SupplierXMLParser(String xmlString) {
-        System.out.println("xmlString: " + xmlString);
-
+        
+        System.out.println("***************************************");
+		System.out.println("xmlString: " + xmlString);
         try {
             DocumentBuilderFactory dbf =
                     DocumentBuilderFactory.newInstance();
@@ -38,31 +39,41 @@ public class SupplierXMLParser {
 
             Document doc = db.parse(is);
             // Get the staff element by tag name directly
-            Node summon = doc.getElementsByTagName("summon").item(0);
+            Node order = doc.getElementsByTagName("order").item(0); //root element
 
 
             // loop the child node
-            NodeList list = summon.getChildNodes();
+            NodeList list = order.getChildNodes();
 
-            for (int i = 0; i < list.getLength(); i++) {
+			
+			for (int i = 0; i < list.getLength(); i++) {
+				System.out.println(list.item(i).getNodeName());
+			}
+			
+					
+            for (int i = 0; i < list.getLength(); i++) { //region, items
 
-                Node node = list.item(i);
+                Node node = list.item(i); //0 region
 
-                if ("region".equals(node.getNodeName())) {
+                if ("region".equals(node.getNodeName())) { //0 region
 
                     region = node.getTextContent();
                     System.out.println("Region: " + region);
                 }
-			
-                if ("item".equals(node.getNodeName())) {
-                    item = node.getTextContent();
-                    System.out.println("Item: ");
-					NodeList itemList = summon.getChildNodes();
+				
+				if ("item".equals(node.getNodeName())) { //1 item
+					
+					Element itemElement = (Element) node;
+					if(itemElement.hasAttributes()){ 			//print ID of item
+						System.out.println("Item ID: " + itemElement.getAttribute("id"));
+					}
+					
+					NodeList subnodeList = node.getChildNodes();
 					
 					//loop the elements in the item child node
-					for (int j = 0; j < itemList.getLength(); j++){
+					for (int j = 0; j < subnodeList.getLength(); j++){
 					
-						Node itemNode = itemList.item(j);
+						Node itemNode = subnodeList.item(j);
 						
 						String description = "";
 						String order_from_supplier_quantity = "";
@@ -78,16 +89,11 @@ public class SupplierXMLParser {
 						if("order_from_supplier_quantity".equals(itemNode.getNodeName())) {
 							
 							order_from_supplier_quantity = itemNode.getTextContent();
-							System.out.println("Order from Supplier Quantity: " + description);
+							System.out.println("Order from Supplier Quantity: " + order_from_supplier_quantity);
 							
 						}
 						
-						if("id".equals(itemNode.getNodeName())) {
-							
-							id = itemNode.getTextContent();
-							System.out.println("Id: " + description);
-							
-						}
+						
 					
 					}
                 }
@@ -95,25 +101,25 @@ public class SupplierXMLParser {
 
 
             // Setting up database related variables
-            /*String dbURL = "jdbc:mysql://localhost:3306/summondb";
+           /* String dbURL = "jdbc:mysql://localhost:3306/summondb";
             String userName = "root";
             String password = "";
             java.sql.Connection dbConn = null;
             Statement statement = null;
 
-            String insertSql = "INSERT into summon_records(id,carplate,carparkid,Stime,fineapplicable,seasonpark,offence,fineamt) values ('"
-                    + id + "','" + cPlate + "','" + cID + "','" + time + "','" + fineApplicable + "','"+ seasonpark + "','"+ offence + "','" + fine + "')";
+            //String insertSql = "INSERT into summon_records(id,carplate,carparkid,Stime,fineapplicable,seasonpark,offence,fineamt) values ('"
+              //      + id + "','" + cPlate + "','" + cID + "','" + time + "','" + fineApplicable + "','"+ seasonpark + "','"+ offence + "','" + fine + "')";
 
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             dbConn = DriverManager.getConnection(dbURL, userName, password);
 
             statement = dbConn.createStatement();
-            statement.executeUpdate(insertSql);
+            //statement.executeUpdate(insertSql);
 
             statement.close(); // close the Statement
             dbConn.close(); // close the Connection
-			
 			*/
+			
 
         } catch (Exception e) {
             e.printStackTrace();

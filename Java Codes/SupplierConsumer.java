@@ -268,7 +268,8 @@ public class SupplierConsumer
                 msg.acknowledge();
 
             //System.err.println("Received message: "+ msg);
-			SupplierXMLParser parse = new SupplierXMLParser(msg.toString());
+			TextMessage tMsg = (TextMessage)msg;
+			SupplierXMLParser parse = new SupplierXMLParser(tMsg.getText());
 			//SupplierXMLParser(msg);
         }
 

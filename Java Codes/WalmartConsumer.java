@@ -267,8 +267,8 @@ public class WalmartConsumer
                 ackMode == Tibjms.EXPLICIT_CLIENT_DUPS_OK_ACKNOWLEDGE)
                 msg.acknowledge();
 
-            //System.err.println("Received message: "+ msg);
-			CustomerXMLParser parser = new CustomerXMLParser(msg.toString());
+            TextMessage tMsg = (TextMessage)msg;
+			CustomerXMLParser parse = new CustomerXMLParser(tMsg.getText());
 			//CustomerXMLParser(msg);
         }
 
