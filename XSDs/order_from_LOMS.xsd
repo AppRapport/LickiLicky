@@ -7,6 +7,13 @@
     <xs:element name="order">
         <xs:complexType>
             <xs:sequence>
+                <xs:element name="order_id"
+                            type="xs:unsignedInt" />
+                <xs:element name="customer_company"
+                            type="xs:string" />
+                <xs:element name="customer_email"
+                            type="xs:string"
+                            minOccurs="0" />
                 <xs:element name="first_name"
                             type="xs:string"
                             minOccurs="0" />
@@ -54,13 +61,6 @@
                 </xs:element>
                 <xs:element name="total_price"
                             type="xs:double"
-                            minOccurs="0" />
-                <xs:element name="order_id"
-                            type="xs:unsignedInt" />
-                <xs:element name="customer_company"
-                            type="xs:string" />
-                <xs:element name="customer_email"
-                            type="xs:string"
                             minOccurs="0" />
             </xs:sequence>
         </xs:complexType>
