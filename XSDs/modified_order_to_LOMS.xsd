@@ -9,17 +9,16 @@
                 maxOccurs="unbounded">
         <xs:complexType>
             <xs:sequence>
+                <xs:element name="order_id"
+                            type="xs:unsignedInt" />
                 <xs:element name="item"
-                            minOccurs="0"
                             maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="description"
-                                        type="xs:string"
-                                        minOccurs="0" />
+                                        type="xs:string" />
                             <xs:element name="confirmed_quantity"
-                                        type="xs:unsignedByte"
-                                        minOccurs="0" />
+                                        type="xs:unsignedInt" />
                         </xs:sequence>
                         <xs:attribute name="id"
                                       type="xs:unsignedByte"
@@ -27,8 +26,6 @@
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
-            <xs:attribute name="order_id"
-                          type="xs:unsignedInt" />
         </xs:complexType>
     </xs:element>
 </xs:schema>

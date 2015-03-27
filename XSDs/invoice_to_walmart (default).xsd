@@ -22,8 +22,7 @@
                                         type="xs:string"
                                         minOccurs="0" />
                             <xs:element name="ship_to_state"
-                                        type="xs:string"
-                                        minOccurs="0" />
+                                        type="xs:string" />
                             <xs:element name="ship_to_zip_code"
                                         type="xs:unsignedShort"
                                         minOccurs="0" />
@@ -31,7 +30,6 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="item"
-                            minOccurs="0"
                             maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:sequence>
@@ -53,8 +51,7 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="total_price"
-                            type="xs:double"
-                            minOccurs="0" />
+                            type="xs:double" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>

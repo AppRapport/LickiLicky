@@ -18,10 +18,8 @@
                             type="xs:string"
                             minOccurs="0" />
                 <xs:element name="region"
-                            type="xs:string"
-                            minOccurs="0" />
-                <xs:element name="ship_to_addr"
-                            minOccurs="0">
+                            type="xs:string" />
+                <xs:element name="ship_to_addr">
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="ship_to_street"
@@ -31,8 +29,7 @@
                                         type="xs:string"
                                         minOccurs="0" />
                             <xs:element name="ship_to_state"
-                                        type="xs:string"
-                                        minOccurs="0" />
+                                        type="xs:string" />
                             <xs:element name="ship_to_zip_code"
                                         type="xs:unsignedShort"
                                         minOccurs="0" />
@@ -40,22 +37,17 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="item"
-                            minOccurs="0"
                             maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="description"
-                                        type="xs:string"
-                                        minOccurs="0" />
+                                        type="xs:string" />
                             <xs:element name="order_quantity"
-                                        type="xs:unsignedInt"
-                                        minOccurs="0" />
+                                        type="xs:unsignedInt" />
                             <xs:element name="confirmed_quantity"
-                                        type="xs:unsignedInt"
-                                        minOccurs="0" />
+                                        type="xs:unsignedInt" />
                             <xs:element name="order_from_supplier_quantity"
-                                        type="xs:unsignedInt"
-                                        minOccurs="0" />
+                                        type="xs:unsignedInt" />
                         </xs:sequence>
                         <xs:attribute name="id"
                                       type="xs:unsignedByte"
