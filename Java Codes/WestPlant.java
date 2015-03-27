@@ -191,12 +191,16 @@ public class WestPlant implements ExceptionListener {
         	TextMessage requestMessage = (TextMessage) message;
 			String messageToIM = processWest(requestMessage.getText()); 
 
+			/*
 			Destination replyDestination = message.getJMSReplyTo();
             MessageProducer replyProducer = session.createProducer(replyDestination);
             TextMessage replyMessage = session.createTextMessage();
 			replyMessage.setJMSCorrelationID(requestMessage.getJMSMessageID());
 			replyMessage.setText(messageToIM);
-			replyProducer.send(replyMessage);
+			replyProducer.send(replyMessage);*/
+
+			String args2[] = {"-server", "localhost", "-queue" , "q.back.plant", messageToIM};
+			EIGenericMsgProducer producer = new EIGenericMsgProducer(args2);
 
         }	catch (Exception err){
 			err.printStackTrace();
@@ -210,6 +214,7 @@ public class WestPlant implements ExceptionListener {
 
 	public String processWest(String xmlString) {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		String messageToPass = null;
 		
 		try {
 			DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
@@ -229,22 +234,22 @@ public class WestPlant implements ExceptionListener {
 			conn = DriverManager.getConnection(dbURL, username, password);
 
 			//variables
-            int quantitydb;
-			int quantity;
-			int orderId;
-			int postal;
-			int lowerThreshold;
-			int upperThreshold;
+            int quantitydb = 0;
+			int quantity = 0;
+			int orderId = 0;
+			int postal = 0;
+			int lowerThreshold = 0;
+			int upperThreshold = 0;
 			int orderToSupplier;
-			boolean isOrdered;
-			String firstname;
-			String lastname;
-			String company;
-			String region;
-			String city;
-			String street;
-			String messageToPass;
-			String state;
+			boolean isOrdered = false;
+			String firstname = null;
+			String lastname = null;
+			String company = null;
+			String region = null;
+			String city = null;
+			String street = null;
+			String state = null;
+			String description = null;
 			String itemTemplate = "";
 
             Node items = dom.getElementsByTagName("item").item(0);
@@ -334,16 +339,16 @@ public class WestPlant implements ExceptionListener {
                     System.out.println("description: " + description);
                 }
 
-                String queryInventory = "SELECT * FROM `inventory` WHERE `item_id` = ?"
+                String queryInventory = "SELECT * FROM `inventory` WHERE `item_id` = ?";
 
 	            try {
 		            pmst = conn.prepareStatement(queryInventory);
-					pmst.setString(1, item_id);
+					pmst.setInt(1, item_id);
 					rs = pmst.executeQuery();
 
 					while (rs.next()) {
 		              	quantitydb = rs.getInt(3);
-		              	is_ordered = rs.getBoolean(4);
+		              	isOrdered = rs.getBoolean(4);
 		              	upperThreshold = rs.getInt(5);
 		              	lowerThreshold = rs.getInt(6);
 		            }
@@ -351,31 +356,31 @@ public class WestPlant implements ExceptionListener {
 		            int quantityUpdate = quantitydb - quantity;
 	            	String updateInventory = "UPDATE `inventory` SET `quantity`= ? WHERE `item_id`= ?";
 
-		            psmt = conn.prepareStatement(updateInventory);
-		            psmt.setInt(1, quantityUpdate);
-		            psmt.setInt(2, item_id);
-		            psmt.executeUpdate();
+		            pmst = conn.prepareStatement(updateInventory);
+		            pmst.setInt(1, quantityUpdate);
+		            pmst.setInt(2, item_id);
+		            pmst.executeUpdate();
 
 			        if(quantityUpdate < lowerThreshold && isOrdered == false) {
 				        String updateIsOrdered = "UPDATE `inventory` SET `is_ordered`= ? WHERE `item_id`= ?";	
 				        orderToSupplier = upperThreshold - quantityUpdate;
 
-			          	psmt = conn.prepareStatement(updateIsOrdered);
-			            psmt.setBoolean(1, true);
-			            psmt.setInt(2, item_id);
-			            psmt.executeUpdate();
+			          	pmst = conn.prepareStatement(updateIsOrdered);
+			            pmst.setBoolean(1, true);
+			            pmst.setInt(2, item_id);
+			            pmst.executeUpdate();
 
 		          		//create xml with additional element confirmed_quantity = quantity, order_to_supplier = orderToSupplier
-		          		itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
-									  + "<confirmed_quantity>" + quantity + "</confirmed_quantity>"
-									  + "<order_from_supplier_quantity>" + orderToSupplier + "</order_from_supplier_quantity>"
-									  + "</item>"
+		          		itemTemplate = itemTemplate + "<item id=\"" + item_id + "\">\n"
+									  + "<confirmed_quantity>" + quantity + "</confirmed_quantity>\n"
+									  + "<order_from_supplier_quantity>" + orderToSupplier + "</order_from_supplier_quantity>\n"
+									  + "</item>\n";
 		          	} else {
 		          		//create xml with additional element confirmed_quantity = quantity, order_to_supplier = 0
-		           		itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
-									  + "<confirmed_quantity>" + quantity + "</confirmed_quantity>"
-									  + "<order_from_supplier_quantity>" + 0 + "</order_from_supplier_quantity>"
-									  + "</item>"
+		           		itemTemplate = itemTemplate + "<item id=\"" + item_id + "\">\n"
+									  + "<confirmed_quantity>" + quantity + "</confirmed_quantity>\n"
+									  + "<order_from_supplier_quantity>" + 0 + "</order_from_supplier_quantity>\n"
+									  + "</item>\n";
 		          	}
 
 		            /*if(quantitydb >= quantity) {
@@ -383,10 +388,10 @@ public class WestPlant implements ExceptionListener {
 			            	int quantityUpdate = quantitydb - quantity;
 			            	String updateInventory = "UPDATE `inventory` SET `quantity`= ? WHERE `item_id`= ?";
 
-				            psmt = conn.prepareStatement(updateInventory);
-				            psmt.setInt(1, quantityUpdate);
-				            psmt.setInt(2, item_id);
-				            psmt.executeUpdate();
+				            pmst = conn.prepareStatement(updateInventory);
+				            pmst.setInt(1, quantityUpdate);
+				            pmst.setInt(2, item_id);
+				            pmst.executeUpdate();
 
 	 			          	//create xml with additional element confirmed_quantity = quantity, order_to_supplier = 0
 				            itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
@@ -399,10 +404,10 @@ public class WestPlant implements ExceptionListener {
 	 			          		String updateIsOrdered = "UPDATE `inventory` SET `is_ordered`= ? WHERE `item_id`= ?";	
 	 			          		orderToSupplier = upperThreshold - quantityUpdate;
 
-	 			          		psmt = conn.prepareStatement(updateIsOrdered);
-					            psmt.setBoolean(1, true);
-					            psmt.setInt(2, item_id);
-					            psmt.executeUpdate();
+	 			          		pmst = conn.prepareStatement(updateIsOrdered);
+					            pmst.setBoolean(1, true);
+					            pmst.setInt(2, item_id);
+					            pmst.executeUpdate();
 
 	 			          		//create xml with additional element confirmed_quantity = quantity, order_to_supplier = orderToSupplier
 	 			          		itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
@@ -414,10 +419,10 @@ public class WestPlant implements ExceptionListener {
 		            } else {
 		            	if(isOrdered == false) {
 		            		String updateIsOrdered = "UPDATE `inventory` SET `is_ordered`= ? WHERE `item_id`= ?";	
-		            		psmt = conn.prepareStatement(updateIsOrdered);
-				            psmt.setBoolean(1, true);
-				            psmt.setInt(2, item_id);
-				            psmt.executeUpdate();
+		            		pmst = conn.prepareStatement(updateIsOrdered);
+				            pmst.setBoolean(1, true);
+				            pmst.setInt(2, item_id);
+				            pmst.executeUpdate();
 
 				            	//create xml with additional element confirmed_quantity = quantity, order_to_supplier = orderToSupplier
 				            	itemTemplate = itemTemplate + "<item id=\"" + item_id + \">"
@@ -431,43 +436,40 @@ public class WestPlant implements ExceptionListener {
 		            	}
 		            	String updateInventory = "UPDATE `inventory` SET `quantity`= ? WHERE `item_id`= ?";
 
-		            	psmt = conn.prepareStatement(updateInventory);
-				        psmt.setInt(1, 0);
-				        psmt.setInt(2, item_id);
-				        psmt.executeUpdate();
+		            	pmst = conn.prepareStatement(updateInventory);
+				        pmst.setInt(1, 0);
+				        pmst.setInt(2, item_id);
+				        pmst.executeUpdate();
 
 				        //create xml with additional element confirmed_quantity = quantitydb, order_to_supplier = upperThreshold
 
 		            }*/
 	            } finally {
-	            	ConnectionManager.close(conn, psmt, rs);
+	            	pmst.close();
+	            	conn.close();
+	            	rs.close();
 	       		}
             }
 
-       		messageToPass = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-										+ "<!-- Created with Liquid XML 2014 Developer Bundle Edition (Education) 12.2.8.5459 (http://www.liquid-technologies.com) -->"
-										+ "<order xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"C:\EI\Labs\LickiLicky\reply_from_plant.xsd\">"
-										+ 	"<first_name>" + firstname + "</first_name>"
-										+ 	"<last_name>" + lastname + "</last_name>"
-										+ 	"<region>" + region + "</region>"
-										+ 	"<ship_to_addr>"
-										+       "<ship_to_street>" + street + "</ship_to_street>"
-										+		"<ship_to_city>" + city + "</ship_to_city>"
-										+       "<ship_to_zip_code>" + postal + "</ship_to_zip_code>"
-										+   "</ship_to_addr>"
-										+ 	itemTemplate  
-										+   "<order_id>" + orderId + "</order_id>"
-										+   "<customer_company>" + company + "</customer_company>"
-										+ "</order>"
-
-           /*
-	        pmst.close(); // close the Statement
-	        conn.close(); // close the Connection
-			*/
+       		messageToPass = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+										//+ "<!-- Created with Liquid XML 2014 Developer Bundle Edition (Education) 12.2.8.5459 (http://www.liquid-technologies.com) -->\n"
+										+ "<order xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"C:/EI/Labs/LickiLicky/reply_from_plant.xsd\">\n"
+										+ 	"<first_name>" + firstname + "</first_name>\n"
+										+ 	"<last_name>" + lastname + "</last_name>\n"
+										+ 	"<region>" + region + "</region>\n"
+										+ 	"<ship_to_addr>\n"
+										+       "<ship_to_street>" + street + "</ship_to_street>\n"
+										+		"<ship_to_city>" + city + "</ship_to_city>\n"
+										+       "<ship_to_zip_code>" + postal + "</ship_to_zip_code>\n"
+										+   "</ship_to_addr>\n"
+										+ 	itemTemplate + "\n"  
+										+   "<order_id>" + orderId + "</order_id>\n"
+										+   "<customer_company>" + company + "</customer_company>\n"
+										+ "</order>\n";
 			
-			return messageToPass;
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		return messageToPass;
 	}
 }
