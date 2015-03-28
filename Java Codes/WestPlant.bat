@@ -4,4 +4,4 @@ javac WestPlant.java
 
 rem # You need to change the server name to machine A's hostname
 
-java -cp %classpath%;c:\tibco\tpcl\5.8\jdbc\mysql-connector-java-5.1.34-bin.jar WestPlant -server localhost -queue q.west.plant
+java -cp %classpath%;c:\tibco\tpcl\5.8\jdbc\mysql-connector-java-5.1.34-bin.jar WestPlant -server localhost -queue q.West.plant
