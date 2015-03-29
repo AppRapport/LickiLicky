@@ -63,6 +63,10 @@ public class OrderServlet extends HttpServlet {
             int birdQuantity = Integer.parseInt(request.getParameter("bird-quantity"));
             int mangoQuantity = Integer.parseInt(request.getParameter("mango-quantity"));
 
+            String cowD = "Cow Tongue flavour";
+            String birdD = "Bird flavour";
+            String mangoD = "Mango Ruby Deluxe";
+
             //order status - N/C/D
             /*for (String f : flavoursList) {
 
@@ -89,6 +93,7 @@ public class OrderServlet extends HttpServlet {
                         + "        <ship_to_zip_code>" + postal + "</ship_to_zip_code>\n"
                         + "    </ship_to_addr>\n"
                         + "    <item id=\"" + cowId + "\" price=\"" + cowPrice + "\">\n"
+                        + "        <description>" + cowD + "</description>\n"
                         + "        <order_quantity>" + cowQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <total_price>" + totalPrice + "</total_price>\n"
@@ -112,6 +117,7 @@ public class OrderServlet extends HttpServlet {
                         + "        <ship_to_zip_code>" + postal + "</ship_to_zip_code>\n"
                         + "    </ship_to_addr>\n"
                         + "    <item id=\"" + birdId + "\" price=\"" + birdPrice + "\">\n"
+                        + "        <description>" + birdD + "</description>\n"
                         + "        <order_quantity>" + birdQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <total_price>" + totalPrice + "</total_price>\n"
@@ -135,6 +141,7 @@ public class OrderServlet extends HttpServlet {
                         + "        <ship_to_zip_code>" + postal + "</ship_to_zip_code>\n"
                         + "    </ship_to_addr>\n"
                         + "    <item id=\"" + mangoId + "\" price=\"" + mangoPrice + "\">\n"
+                        + "        <description>" + mangoD + "</description>\n"
                         + "        <order_quantity>" + mangoQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <total_price>" + totalPrice + "</total_price>\n"
@@ -158,9 +165,11 @@ public class OrderServlet extends HttpServlet {
                         + "        <ship_to_zip_code>" + postal + "</ship_to_zip_code>\n"
                         + "    </ship_to_addr>\n"
                         + "    <item id=\"" + cowId + "\" price=\"" + cowPrice + "\">\n"
+                        + "        <description>" + cowD + "</description>\n"
                         + "        <order_quantity>" + cowQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <item id=\"" + birdId + "\" price=\"" + birdPrice + "\">\n"
+                        + "        <description>" + birdD + "</description>\n"
                         + "        <order_quantity>" + birdQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <total_price>" + totalPrice + "</total_price>\n"
@@ -184,9 +193,11 @@ public class OrderServlet extends HttpServlet {
                         + "        <ship_to_zip_code>" + postal + "</ship_to_zip_code>\n"
                         + "    </ship_to_addr>\n"
                         + "    <item id=\"" + cowId + "\" price=\"" + cowPrice + "\">\n"
+                        + "        <description>" + cowD + "</description>\n"
                         + "        <order_quantity>" + cowQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <item id=\"" + mangoId + "\" price=\"" + mangoPrice + "\">\n"
+                        + "        <description>" + mangoD + "</description>\n"
                         + "        <order_quantity>" + mangoQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <total_price>" + totalPrice + "</total_price>\n"
@@ -210,9 +221,11 @@ public class OrderServlet extends HttpServlet {
                         + "        <ship_to_zip_code>" + postal + "</ship_to_zip_code>\n"
                         + "    </ship_to_addr>\n"
                         + "    <item id=\"" + birdId + "\" price=\"" + birdPrice + "\">\n"
+                        + "        <description>" + birdD + "</description>\n"
                         + "        <order_quantity>" + birdQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <item id=\"" + mangoId + "\" price=\"" + mangoPrice + "\">\n"
+                        + "        <description>" + mangoD + "</description>\n"
                         + "        <order_quantity>" + mangoQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <total_price>" + totalPrice + "</total_price>\n"
@@ -236,12 +249,15 @@ public class OrderServlet extends HttpServlet {
                         + "        <ship_to_zip_code>" + postal + "</ship_to_zip_code>\n"
                         + "    </ship_to_addr>\n"
                         + "    <item id=\"" + cowId + "\" price=\"" + cowPrice + "\">\n"
+                        + "        <description>" + cowD + "</description>\n"
                         + "        <order_quantity>" + cowQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <item id=\"" + birdId + "\" price=\"" + birdPrice + "\">\n"
+                        + "        <description>" + birdD + "</description>\n"
                         + "        <order_quantity>" + birdQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <item id=\"" + mangoId + "\" price=\"" + mangoPrice + "\">\n"
+                        + "        <description>" + mangoD + "</description>\n"
                         + "        <order_quantity>" + mangoQuantity + "</order_quantity>\n"
                         + "    </item>\n"
                         + "    <total_price>" + totalPrice + "</total_price>\n"
