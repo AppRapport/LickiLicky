@@ -20,6 +20,9 @@
                             minOccurs="0" />
                 <xs:element name="customer_email"
                             type="xs:string" />
+                <xs:element name="mobile"
+                            type="xs:unsignedInt"
+                            minOccurs="0" />
                 <xs:element name="ship_to_addr">
                     <xs:complexType>
                         <xs:sequence>
