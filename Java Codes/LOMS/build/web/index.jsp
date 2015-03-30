@@ -148,11 +148,11 @@
                         <td><b>Cow Tongue</b> - (US$40 per Carton)</td>
                         <td><select name="cow-quantity" class="form-control">
                                 <option value="0"> -- Select --  </option>
-                                <option value="10">50 Carton</option>
-                                <option value="20">100 Carton</option>
-                                <option value="30">150 Carton</option>
-                                <option value="40">200 Carton</option>
-                                <option value="50">250 Carton</option>
+                                <option value="50">50 Carton</option>
+                                <option value="100">100 Carton</option>
+                                <option value="150">150 Carton</option>
+                                <option value="200">200 Carton</option>
+                                <option value="250">250 Carton</option>
                             </select>
                         </td>
                     </tr>
@@ -161,11 +161,11 @@
                         <td><b>Bird (including java sparrow)</b> - (US$50 per Carton)</td>
                         <td><select name="bird-quantity" class="form-control">
                                 <option value="0"> -- Select -- </option>
-                                <option value="10">50 Carton</option>
-                                <option value="20">100 Carton</option>
-                                <option value="30">150 Carton</option>
-                                <option value="40">200 Carton</option>
-                                <option value="50">250 Carton</option>
+                                <option value="50">50 Carton</option>
+                                <option value="100">100 Carton</option>
+                                <option value="150">150 Carton</option>
+                                <option value="200">200 Carton</option>
+                                <option value="250">250 Carton</option>
                             </select></td>
                     </tr>
                     <tr>
