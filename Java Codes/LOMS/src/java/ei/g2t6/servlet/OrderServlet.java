@@ -310,7 +310,54 @@ public class OrderServlet extends HttpServlet {
             String args2[] = {"-server", "localhost", "-queue", "q.loms.neworder", xmlMessage};
             LOMSOrderMsgProducer producer = new LOMSOrderMsgProducer(args2);
 
-            out.println("Thank you for ordering with Lickilicky!");
+            out.println("<!DOCTYPE html>\n" +
+"<html>\n" +
+"    <head>\n" +
+"        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" +
+"        <link href=\"css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
+"        <link href=\"css/style.css\" rel=\"stylesheet\">\n" +
+"        <title>LickiLicky Ordering Management System</title>\n" +
+"    </head>\n" +
+"    <body><!--content goes here -->\n" +
+"        \n" +
+"        <!--Navigation bar-->\n" +
+"        <div class = \"navbar navbar-inverse navbar-static-top\">\n" +
+"            <div class=\"container\">\n" +
+"                <a href = \"#\" class =\"navbar-brand\">\n" +
+"                    <img src=\"images/lickilicky_logo.png\" width = \"200px\" height=\"65px\">\n" +
+"                </a>\n" +
+"\n" +
+"                <div class=\"collapse navbar-collapse navHeaderCollapse\">\n" +
+"                    <ul class=\"nav navbar-nav navbar-right navbar-text\">\n" +
+"                        \n" +
+"                        <li><a href=\"#\" style=\"color: #aaaaaa;\"><b>Order with us now!</b></a></li>\n" +
+"                    </ul>\n" +
+"                </div>\n" +
+"\n" +
+"            </div>\n" +
+"\n" +
+"        </div>\n" +
+"        \n" +
+"        <!--Content of body-->\n" +
+"        <div class=\"container\">\n" +
+"                <h2>Thank you for ordering with Lickilicky!</h2>\n" +
+"            <br/><br/>\n" +
+"                <img src=\"images/lickilicky_pic.png\" width=\"480\" height=\"529\" align=\"right\">\n" +
+"        </div>\n" +
+"        \n" +
+"        <br /><br /><br /><br /><br />\n" +
+"        <!-- Footer -->\n" +
+"        <div class=\"navbar navbar-default navbar-fixed-bottom\">\n" +
+"            <div class=\"container\">\n" +
+"                <div class=\"text-center nav-centertext\">&copy 2014 LickiLicky Ice Cream. All rights reserved</div>\n" +
+"            </div>\n" +
+"        </div> \n" +
+"        \n" +
+"        <script src=\"js/jquery-1.11.1.min.js\"></script>\n" +
+"        <script src=\"js/bootstrap.js\"></script>\n" +
+"        \n" +
+"    </body>\n" +
+"</html>");
             
 //            writer.close();
 

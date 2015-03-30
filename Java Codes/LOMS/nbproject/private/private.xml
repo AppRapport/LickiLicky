@@ -3,11 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/USER/Documents/NetBeansProjects/LOMS/src/java/ei/g2t6/servlet/OrderServlet.java</file>
-            <file>file:/C:/Users/USER/Documents/NetBeansProjects/LOMS/src/java/ei/g2t6/dao/OrderDAO.java</file>
-            <file>file:/C:/Users/USER/Documents/NetBeansProjects/LOMS/web/index.jsp</file>
-            <file>file:/C:/Users/USER/Documents/NetBeansProjects/LOMS/src/java/ei/g2t6/servlet/LOMSOrderMsgConsumer.java</file>
-            <file>file:/C:/Users/USER/Documents/NetBeansProjects/LOMS/web/listen.jsp</file>
+            <file>file:/D:/School/Year%202/Term%202/EI/Project/LOMS/web/index.jsp</file>
+            <file>file:/D:/School/Year%202/Term%202/EI/Project/LOMS/src/java/ei/g2t6/servlet/OrderServlet.java</file>
         </group>
     </open-files>
 </project-private>
