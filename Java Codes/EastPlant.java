@@ -27,6 +27,7 @@ public class EastPlant implements ExceptionListener {
     boolean useTopic = true;
     PreparedStatement updatePstmt = null;
     PreparedStatement queryPstmt = null;
+	String ipAddress = "localhost";
 
     /*-----------------------------------------------------------------------
     * Variables
@@ -38,8 +39,6 @@ public class EastPlant implements ExceptionListener {
 
     public EastPlant(String[] args) {
         parseArgs(args);
-		
-		String ipAddress = "localhost";
 		
 		try {
 			File file = new File("config.properties");
@@ -222,7 +221,7 @@ public class EastPlant implements ExceptionListener {
 			replyMessage.setText(messageToIM);
 			replyProducer.send(replyMessage);*/
 
-			String args2[] = {"-server", "localhost", "-queue" , "q.back.plant", messageToIM};
+			String args2[] = {"-server", ipAddress, "-queue" , "q.back.plant", messageToIM};
 			EIGenericMsgProducer producer = new EIGenericMsgProducer(args2);
 
         }	catch (Exception err){

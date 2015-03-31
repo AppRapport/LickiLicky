@@ -35,11 +35,10 @@ public class WestPlant implements ExceptionListener {
     Session session = null;
     MessageConsumer msgConsumer = null;
     Destination destination = null;
+	String ipAddress = "localhost";
 
     public WestPlant(String[] args) {
         parseArgs(args);
-		
-		String ipAddress = "localhost";
 		
 		try {
 			File file = new File("config.properties");
@@ -222,7 +221,7 @@ public class WestPlant implements ExceptionListener {
 			replyMessage.setText(messageToIM);
 			replyProducer.send(replyMessage);*/
 
-			String args2[] = {"-server", "localhost", "-queue" , "q.back.plant", messageToIM};
+			String args2[] = {"-server", ipAddress, "-queue" , "q.back.plant", messageToIM};
 			EIGenericMsgProducer producer = new EIGenericMsgProducer(args2);
 
         }	catch (Exception err){

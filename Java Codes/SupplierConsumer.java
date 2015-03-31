@@ -68,12 +68,11 @@ public class SupplierConsumer
       Session         session     = null;
       MessageConsumer msgConsumer = null;
       Destination     destination = null;
+	  String ipAddress = "localhost";
 
     public SupplierConsumer(String[] args)
     {
         parseArgs(args);
-		
-		String ipAddress = "localhost";
 		
 		try {
 			File file = new File("config.properties");

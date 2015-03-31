@@ -70,11 +70,10 @@ public class EIGenericMsgProducer {
     Session session = null;
     MessageProducer msgProducer = null;
     Destination destination = null;
+	String ipAddress = "localhost";
 
     public EIGenericMsgProducer(String[] args) {
         parseArgs(args);
-		
-		String ipAddress = "localhost";
 		
 		try {
 			File file = new File("config.properties");
