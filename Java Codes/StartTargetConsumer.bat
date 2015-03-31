@@ -4,4 +4,4 @@ javac TargetConsumer.java
 
 rem # You need to change the server name to machine A's hostname
 
-java TargetConsumer -queue target.invoice
+java TargetConsumer -server 10.124.128.104 -queue target.invoice

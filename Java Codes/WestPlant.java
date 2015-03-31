@@ -35,34 +35,14 @@ public class WestPlant implements ExceptionListener {
     Session session = null;
     MessageConsumer msgConsumer = null;
     Destination destination = null;
-	String ipAddress = "localhost";
 
     public WestPlant(String[] args) {
         parseArgs(args);
 		
-		try {
-			File file = new File("config.properties");
-			FileInputStream fileInput = new FileInputStream(file);
-			Properties properties = new Properties();
-			properties.load(fileInput);
-			fileInput.close();
-
-			Enumeration enuKeys = properties.keys();
-			ipAddress = properties.getProperty("ipaddress");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
-		ArrayList<String> argsArrayList = new ArrayList<String>(Arrays.asList(args));
-		argsArrayList.add("-server");
-		argsArrayList.add(ipAddress);
-		String[] newParam = new String[argsArrayList.size()];
-		newParam = argsArrayList.toArray(newParam);
 
         try {
-            tibjmsUtilities.initSSLParams(serverUrl, newParam);
+            tibjmsUtilities.initSSLParams(serverUrl, args);
         }
         catch (JMSSecurityException e) {
             System.err.println("JMSSecurityException: " + e.getMessage() + ", provider=" + e.getErrorCode());
@@ -74,7 +54,7 @@ public class WestPlant implements ExceptionListener {
 		System.out.println("+-------------------------------------------------+");
 		System.out.println("Customer Points Retrieval System");
 		System.out.println("+-------------------------------------------------+");
-        System.err.println("Server....................... " + ((serverUrl != null) ? serverUrl : ipAddress));
+        System.err.println("Server....................... " + ((serverUrl != null) ? serverUrl : "localhost"));
         System.err.println("User......................... " + ((userName != null) ? userName : "(null)"));
         System.err.println("Destination.................. " + name);
         System.err.println("------------------------------------------------------------------------\n");
