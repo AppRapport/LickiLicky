@@ -35,11 +35,10 @@ public class WestPlant implements ExceptionListener {
     Session session = null;
     MessageConsumer msgConsumer = null;
     Destination destination = null;
+	String ipAddress = "localhost";
 
     public WestPlant(String[] args) {
         parseArgs(args);
-		
-		String ipAddress = "localhost";
 		
 		try {
 			File file = new File("config.properties");
