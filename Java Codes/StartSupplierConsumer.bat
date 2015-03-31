@@ -4,4 +4,4 @@ javac SupplierConsumer.java
 
 rem # You need to change the server name to machine A's hostname
 
-java SupplierConsumer -server 127.0.0.1 -queue supplier.reorder
+java SupplierConsumer -queue supplier.reorder

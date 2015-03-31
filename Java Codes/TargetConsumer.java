@@ -42,6 +42,8 @@
  */
 
 import javax.jms.*;
+import java.util.*;
+import java.io.*;
 
 import com.tibco.tibjms.Tibjms;
 
@@ -70,9 +72,33 @@ public class TargetConsumer
     public TargetConsumer(String[] args)
     {
         parseArgs(args);
+		
+		String ipAddress = "localhost";
+		
+		try {
+			File file = new File("config.properties");
+			FileInputStream fileInput = new FileInputStream(file);
+			Properties properties = new Properties();
+			properties.load(fileInput);
+			fileInput.close();
+
+			Enumeration enuKeys = properties.keys();
+			ipAddress = properties.getProperty("ipaddress");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		ArrayList<String> argsArrayList = new ArrayList<String>(Arrays.asList(args));
+		argsArrayList.add("-server");
+		argsArrayList.add(ipAddress);
+		String[] newParam = new String[argsArrayList.size()];
+		newParam = argsArrayList.toArray(newParam);
+
 
         try {
-            tibjmsUtilities.initSSLParams(serverUrl,args);
+            tibjmsUtilities.initSSLParams(serverUrl,newParam);
         }
         catch (JMSSecurityException e)
         {
@@ -85,7 +111,7 @@ public class TargetConsumer
         System.err.println("\n------------------------------------------------------------------------");
         System.err.println("tibjmsMsgConsumer SAMPLE");
         System.err.println("------------------------------------------------------------------------");
-        System.err.println("Server....................... "+((serverUrl != null)?serverUrl:"localhost"));
+        System.err.println("Server....................... "+((serverUrl != null)?serverUrl:ipAddress));
         System.err.println("User......................... "+((userName != null)?userName:"(null)"));
         System.err.println("Destination.................. "+name);
         System.err.println("------------------------------------------------------------------------\n");
