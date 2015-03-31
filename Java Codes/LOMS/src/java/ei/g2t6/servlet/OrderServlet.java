@@ -50,7 +50,7 @@ public class OrderServlet extends HttpServlet {
             
             //assigning description
             String cowD = "Cow Tongue";
-            String birdD = "Bird Bird (including java sparrow)";
+            String birdD = "Bird Shit";
             String mangoD = "Mango Ruby";
 
             /* Process order to update database */

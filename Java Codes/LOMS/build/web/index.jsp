@@ -158,7 +158,7 @@
                     </tr>
                     <tr>
                         <td><input type="checkbox" name="flavours" value="bird" class="checkbox-inline"></td>
-                        <td><b>Bird (including java sparrow)</b> - (US$50 per Carton)</td>
+                        <td><b>Bird Shit</b> - (US$50 per Carton)</td>
                         <td><select name="bird-quantity" class="form-control">
                                 <option value="0"> -- Select -- </option>
                                 <option value="50">50 Carton</option>
