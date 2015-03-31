@@ -201,7 +201,7 @@ public class WestPlant implements ExceptionListener {
 			replyMessage.setText(messageToIM);
 			replyProducer.send(replyMessage);*/
 
-			String args2[] = {"-server", ipAddress, "-queue" , "q.back.plant", messageToIM};
+			String args2[] = {"-server", "localhost", "-queue" , "q.back.plant", messageToIM};
 			EIGenericMsgProducer producer = new EIGenericMsgProducer(args2);
 
         }	catch (Exception err){
